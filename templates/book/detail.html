@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block con %}
+
+<div class="text-center" style="height: 100%; margin-top: 1rem;">
+    <h1>{{ books.memo }}</h1>
+    <p>Money: {{ books.money|intcomma }}원</p>
+    <p>Date: {{ books.date }}</p>
+    <img src="{{ books.receipt.url }}"><br>
+    <p>Short URL: <a href="{{ short_url }}" target="_blank">{{ short_url }}</a></p>
+
+    <a href="{% url 'book:update' pk=books.pk %}"><button class="btn btn-outline-primary">Update</button></a>
+    <a href="{% url 'book:duplicate' pk=books.pk %}"><button class="btn btn-outline-primary">Duplicate</button></a>
+    <a href="{% url 'book:delete' pk=books.pk %}"><button class="btn btn-outline-danger">Delete</button></a>
+</div>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block con %}
+<style>
+  input[type="text"], input[type="number"],input[type="file"]  {
+  width: 500px;
+  margin: 0 auto;
+}
+</style>
+<div class="text-center" style="height: 100%; margin-top: 1rem;">
+  <h1>Edit Household Account</h1>
+  <form method="post"  enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form | crispy }}
+    <button type="submit" class="btn btn-outline-primary">Save Changes</button>
+  </form>
+</div>
+{% endblock %}
