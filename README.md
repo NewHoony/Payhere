@@ -1,4 +1,5 @@
 # Payhere Project
+![main](https://user-images.githubusercontent.com/105026915/230719007-434700a7-95c5-4bf0-85ed-4d967a532055.png)
 
 ## 개발 환경
 ● Ubuntu 22.04 <br>
