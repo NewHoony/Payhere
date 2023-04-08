@@ -81,6 +81,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'payhere.urls'
+APPEND_SLASH = False
 
 TEMPLATES = [
     {

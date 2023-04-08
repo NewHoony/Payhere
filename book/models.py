@@ -10,6 +10,4 @@ class Book(models.Model):
     def __str__(self):
         return f"{self.date} - {self.memo}: {self.money}"
 
-    def get_absolute_url(self):
-        return reverse('book:detail', kwargs={'pk': self.pk})
 # Create your models here.

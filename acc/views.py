@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib import messages
 from django.http import JsonResponse
 
 from rest_framework.views import APIView
@@ -11,11 +10,41 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework_jwt.settings import api_settings
+from rest_framework_jwt.views import ObtainJSONWebToken
+from .serializers import CustomJSONWebTokenSerializer
 
 from .forms import *
 
-jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
-jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+class CustomObtainJSONWebToken(ObtainJSONWebToken):
+    serializer_class = CustomJSONWebTokenSerializer
+
+@api_view(['POST'])
+def refresh_jwt_token(request):
+    jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+    jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+    payload = jwt_payload_handler(request.user)
+    token = jwt_encode_handler(payload)
+
+    return Response({'token': token}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def token_view(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+
+    user = authenticate(username=email, password=password)
+    if user is not None:
+        payload = jwt_payload_handler(user)
+        token = jwt_encode_handler(payload)
+        return Response({'token': token})
+    else:
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def protected_view(request):
+    return JsonResponse({'message': 'This is a protected endpoint.'})
 
 def signup(request):
     if request.method == 'POST':
@@ -47,21 +76,3 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('book:index')
-
-@api_view(['POST'])
-def token_view(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-
-    user = authenticate(username=email, password=password)
-    if user is not None:
-        payload = jwt_payload_handler(user)
-        token = jwt_encode_handler(payload)
-        return Response({'token': token})
-    else:
-        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def protected_view(request):
-    return JsonResponse({'message': 'This is a protected endpoint.'})
